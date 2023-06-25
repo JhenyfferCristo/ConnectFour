@@ -14,15 +14,25 @@ namespace ConnectFour
     {
         public override int MakeMove(char[,] board)
         {
-
+            Console.Write(Name + "'s Turn. Please enter a column number between 1 and 7: ");
+            int column= int.Parse(Console.ReadLine());
+            return column;
         }
+
     }
 
     public class ComputerPlayer : Player
     {
         public override int MakeMove(char[,] board)
         {
-
+            Radom radom = new Random();
+            int column;
+            do
+            {
+                column = radom.Next(1,8);
+            } while (board [1, column] == 'X' || board[1, column] == 'O');
+            
+            return column;
         }
     }
 
@@ -94,7 +104,7 @@ namespace ConnectFour
         {
             public static void Main(string[] args)
             {
-
+                Console.WriteLine("Play Connect Four\n");
             }
         }
 
