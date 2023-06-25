@@ -44,27 +44,64 @@ namespace ConnectFour
 
         public GameBoard(int width, int lenght)
         {
-
+            board = new char[lenght +3, width +2];
+            trueWidth = width;
+            trueLength = lenght;
         }
+
+        public char[,] Board { get { return board; } }
 
         public bool IsColumnFull(int column)
         {
+         
+            return board[1, column] == 'X' || board[1, column] == 'O';
 
         }
 
         public void PlacePiece(int column, char piece)
         {
-
+            for (int row = trueLength; row >= 1; row--) 
+            {
+                if (board[row,column] != 'X' && board[row,column] != 'O')
+                {
+                    board[row,column] = piece;
+                    break;
+                }
+            }
         }
 
         public bool CheckWin(char piece)
         {
+            for (int row = trueLength; row >= 1; row--)
+            {
+                for (int col = trueWidth; col >= 1; col--)
+                {
+                    if (board[row, col] == piece &&
+                        (board[row - 1, col - 1] == piece && board[row - 2, col - 2] == piece && board[row - 3, col - 3] == piece ||
+                         board[row, col - 1] == piece && board[row, col - 2] == piece && board[row, col - 3] == piece ||
+                         board[row - 1, col] == piece && board[row - 2, col] == piece && board[row - 3, col] == piece ||
+                         board[row - 1, col + 1] == piece && board[row - 2, col + 2] == piece && board[row - 3, col + 3] == piece ||
+                         board[row, col + 1] == piece && board[row, col + 2] == piece && board[row, col + 3] == piece))
+                    {
+                        return true;
+                    }
+                }
 
+            }
+            return false;
         }
 
         public bool IsBoardFull()
         {
+            for (int col = 1; col <= trueWidth; col++)
+            {
+                if (board[1,col] != 'X' && board[1,col] != 'O')
+                {
+                    retun false;
+                }
+            }
 
+            return true;
         }
 
     }
