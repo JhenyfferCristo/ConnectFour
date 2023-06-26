@@ -15,7 +15,7 @@ namespace ConnectFour
         public override int MakeMove(char[,] board)
         {
             Console.Write(Name + "'s Turn. Please enter a column number between 1 and 7: ");
-            int column= int.Parse(Console.ReadLine());
+            int column = int.Parse(Console.ReadLine());
             return column;
         }
 
@@ -25,11 +25,11 @@ namespace ConnectFour
     {
         public override int MakeMove(char[,] board)
         {
-            Radom radom = new Random();
+            Random random = new Random();
             int column;
             do
             {
-                column = radom.Next(1,8);
+                column = random.Next(1,8);
             } while (board [1, column] == 'X' || board[1, column] == 'O');
             
             return column;
@@ -97,51 +97,152 @@ namespace ConnectFour
             {
                 if (board[1,col] != 'X' && board[1,col] != 'O')
                 {
-                    retun false;
+                    return false;
                 }
             }
 
             return true;
         }
-
+        
     }
 
     public class GamePlayer 
     { 
-    private GameBoard board;
-    private Player playerOne;
-    private Player playerTwo; 
+        private GameBoard board;
+        private Player playerOne;
+        private Player playerTwo; 
 
-     public GamePlayer()
+        public GamePlayer()
         {
             board = new GameBoard(7, 6);
         }
 
         public void StartGame()
         {
+            playerOne = GetPlayer("Player One");
+            playerOne.ID = 'X';
 
+            playerTwo = GetPlayer("Player Two");
+            playerTwo.ID = 'O';
+
+            PlayGame();
         }
 
-        private Player GetPlayer()
+        private Player GetPlayer(string playerName)
         {
+            Console.WriteLine(playerName + ", please enter your name: ");
+            string name = Console.ReadLine();
+            Console.WriteLine();
 
+            Console.WriteLine("Choose player type:");
+            Console.WriteLine("1. Human Player");
+            Console.WriteLine("2. Computer Player");
+            Console.Write("Enter player type (1-2): ");
+            int playerType = int.Parse(Console.ReadLine());
+            Console.WriteLine();
+
+            Player player;
+            if (playerType == 1)
+            {
+                player = new HumanPlayer();
+            }
+            else
+            {
+                player = new ComputerPlayer();
+            }
+
+            player.Name = name;
+            return player;
         }
 
         private void PlayGame()
         {
+            int currentPlayer = 1;
+            do
+            {
+                Player currentPlayerObj;
+                if (currentPlayer == 1)
+                {
+                    currentPlayerObj = playerOne;
+                }
+                else
+                {
+                    currentPlayerObj = playerTwo;
+                }
+                Console.Clear();
+                DisplayBoard();
 
+                int move;
+                do
+                {
+                    move = currentPlayerObj.MakeMove(board.Board);
+                    if (IsInvalidMove(move) || board.IsColumnFull(move))
+                    {
+                        Console.WriteLine("Invalid move. Please try again.");
+                    }
+                }while (IsInvalidMove(move) || board.IsColumnFull(move));
+
+                board.PlacePiece(move, currentPlayerObj.ID);
+
+                if(board.CheckWin(currentPlayerObj.ID))
+                {
+                    Console.Clear();
+                    DisplayBoard();
+                    Console.WriteLine(currentPlayerObj.Name + " Connected Four! You Win!");
+                    break;
+                }
+
+                if (board.IsBoardFull())
+                {
+                    Console.Clear();
+                    DisplayBoard();
+                    Console.WriteLine("The board is full. It's a draw!");
+                    break;
+                }
+
+                if (currentPlayer == 1)
+                {
+                    currentPlayer = 2;
+                }
+                else
+                {
+                    currentPlayer = 1;
+                }
+            }while(true);
+        }
+
+        private bool IsInvalidMove(int move)
+        {
+            return move < 1 || move > 7;
         }
 
         private void DisplayBoard()
         {
+            for (int row = 1; row <= board.Board.GetLength(0) - 3; row++)
+            {
+                Console.Write("|");
+                for (int col = 1; col <= board.Board.GetLength(1) - 2; col++)
+                {
+                    if (board.Board[row, col] != 'X' && board.Board[row, col] != 'O')
+                    {
+                        board.Board[row, col] = '*';
+                    }
 
+                    Console.Write(board.Board[row, col]);
+                }
+                Console.WriteLine("|");
+            }
+            Console.WriteLine();
         }
 
         public class Program
         {
             public static void Main(string[] args)
             {
-                Console.WriteLine("Play Connect Four\n");
+                Console.WriteLine("Play Connect Four!\n");
+
+                GamePlayer gameController = new GamePlayer();
+                gameController.StartGame();
             }
         }
 
