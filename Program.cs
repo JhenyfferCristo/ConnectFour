@@ -38,6 +38,7 @@ namespace ConnectFour
 
     public class GameBoard
     {
+        //Two dimentional array to creat the rows and columns
         private char[,] board;
         private int trueWidth;
         private int trueLength;
@@ -48,7 +49,7 @@ namespace ConnectFour
             trueWidth = width;
             trueLength = lenght;
         }
-
+        //property to access the private board
         public char[,] Board { get { return board; } }
 
         public bool IsColumnFull(int column)
@@ -125,6 +126,13 @@ namespace ConnectFour
             playerTwo = GetPlayer("Player Two");
             playerTwo.ID = 'O';
 
+            //It ramdonly chooses the player to start the first move
+            if (new Random().Next(2) == 0)
+            {
+                Player swap = playerOne;
+                playerOne = playerTwo;
+                playerTwo = swap;
+            }
             PlayGame();
         }
 
@@ -210,7 +218,7 @@ namespace ConnectFour
                 }
             }while(true);
         }
-
+        //function to identify if the user entered a valid number of columns
         private bool IsInvalidMove(int move)
         {
             return move < 1 || move > 7;
